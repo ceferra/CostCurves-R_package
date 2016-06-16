@@ -27,7 +27,7 @@ For linux download: "CostCurves_0.1.0.tar"
 ```
 
 
-For windows download: "CostLines_0.1.0"
+For windows download: "CostCurves_0.1.0"
 ```{r}
 #install.packages("../CostCurves_0.1.0")
 ```
@@ -40,8 +40,9 @@ library(CostCurves)
 ```
 ###Load data
 ```{r}
-data<-data("predictions")
-print (data)
+data("predictions")
+print(predictions)
+
 classes<-predictions$classes
 A<- predictions$A
 B<- predictions$B
@@ -140,7 +141,9 @@ R<-RocCurves(list(B, A), list(classes), gridOFF=FALSE,
 
 ```
 ***
+
 ##Description of features
+
 ###Functions to plot Cost Curves
 * CostLines
 * TestOptimal
