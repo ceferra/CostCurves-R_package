@@ -27,7 +27,7 @@ For linux download: "CostCurves_0.1.0.tar"
 ```
 
 
-For windows download: "CostCurves_0.1.0"
+For windows download: "CostLines_0.1.0"
 ```{r}
 #install.packages("../CostCurves_0.1.0")
 ```
@@ -41,6 +41,7 @@ library(CostCurves)
 ###Load data
 ```{r}
 data<-data("predictions")
+print (data)
 classes<-predictions$classes
 A<- predictions$A
 B<- predictions$B
@@ -48,25 +49,49 @@ C<- predictions$B
 ```
 ###Examples
 
+
+####__Cost Lines__
+
+```{r}
+
+#names legend
+CostLines(list(A, B), list(classes, classes), col=c("blue", "red"), lty=c(1, 2), namesClassifiers = c("A","B"))
+
+#Loss by cost and LegendOFF
+CostLines(list(A, B, rnorm(10)), list(classes), uniquec=TRUE, loss2skew = TRUE, lty=5)
+
+```
+
+####__Test Optimal treshold choice method__
+
+```{r}
+#Loss by cost
+R<-TestOptimal(list(A, B), list(classes), uniquec=TRUE, pointsOFF = FALSE)
+
+#Loss by skew
+R<-TestOptimal(list(A, B), list(classes), uniquec=TRUE,	loss2skew = TRUE,  pointsOFF=FALSE)
+
+```
+
+####__Train Optimal treshold choice method__
+
+```{r}
+#Loss by cost
+R<-TrainOptimal(list(A, B), list(classes), list(A, B), list(classes),  pointsOFF=FALSE, uniquect = TRUE, uniquecT = TRUE, loss2skew = TRUE, refuseT = TRUE)
+
+#Loss by skew
+R<-TrainOptimal(list(A, B), list(classes),	list(B, A), list(classes), uniquect = TRUE,	namesClassifiers=c("A", "B"), namesTests=c("B","A"), uniquecT = TRUE)
+
+```
+
 ####__Brier Curves (score driven treshold choice method)__
+
 ```{r}
 #Loss by cost
 R<-BrierCurves(list(A, B), list(classes),	uniquec = TRUE, pointsOFF=FALSE)
 
 #Loss by skew
 R<-BrierCurves(list(A, B), list((1-classes), classes), loss2skew = TRUE, gridOFF = FALSE, pointsOFF=FALSE, main=NULL)
-
-```
-
-####__Cost Curves__
-
-```{r}
-
-#names legend
-CostCurves(list(A, B), list(classes, classes), col=c("blue", "red"), lty=c(1, 2), namesClassifiers = c("A","B"))
-
-#Loss by cost and LegendOFF
-CostCurves(list(A, B, rnorm(10)), list(classes), uniquec=TRUE, loss2skew = TRUE, lty=5)
 
 ```
 
@@ -93,6 +118,15 @@ R<-RateDrivenCurves(list((1-C), B, rnorm(10)), list(classes),  pointsOFF=FALSE, 
 
 ```
 
+####__Full Options to plotting Cost Curves (CostCurves function)__
+
+```{r}
+R<-CostCurves(list(A, B), list(classes), cost_lines = FALSE, uniquec = TRUE,	train_optimal = TRUE,	predictionsT =  list(B, A), classesT = list(classes), uniquecT = TRUE, rate_driven = TRUE)
+
+R<-CostCurves(list(A, B), list(classes), cost_lines = FALSE, loss2skew = TRUE, uniquec = TRUE, train_optimal = TRUE, predictionsT =  list(B), classesT = list(classes), uniqueTrain = TRUE, kendall_curves = TRUE, rate_driven = TRUE)
+
+```
+
 ####__ROC Curves__
 
 ```{r}
@@ -103,50 +137,19 @@ R<-RocCurves(list((1-A), A, B), list(classes, classes, (1-classes)), gridOFF=FAL
 R<-RocCurves(list(B, A), list(classes), gridOFF=FALSE,
 	positiveY = TRUE, uniquec = TRUE, ylab="TP", xlab="FP")
 
-```
-
-####__Test Optimal treshold choice method__
-
-```{r}
-#Loss by cost
-R<-TestOptimal(list(A, B), list(classes), uniquec=TRUE, pointsOFF = FALSE)
-
-#Loss by skew
-R<-TestOptimal(list(A, B), list(classes), uniquec=TRUE,	loss2skew = TRUE,  pointsOFF=FALSE)
 
 ```
-
-####__Training Optimal treshold choice method__
-
-```{r}
-#Loss by cost
-R<-TrainingOptimal(list(A, B), list(classes), list(A, B), list(classes),  pointsOFF=FALSE, uniquect = TRUE, uniquecT = TRUE, loss2skew = TRUE, refuseT = TRUE)
-
-#Loss by skew
-R<-TrainingOptimal(list(A, B), list(classes),	list(B, A), list(classes), uniquect = TRUE,	namesClassifiers=c("A", "B"), namesTests=c("B","A"), uniquecT = TRUE)
-
-```
-
-####__Full Options to plotting Cost Curves (CCtresholChoice function)__
-
-```{r}
-R<-CCtresholdChoice(list(A, B), list(classes), cost_curves = FALSE, uniquec = TRUE,	training_optimal = TRUE,	predictionsT =  list(B, A), classesT = list(classes), uniquecT = TRUE, rate_driven = TRUE)
-
-R<-CCtresholdChoice(list(A, B), list(classes), cost_curves = FALSE, loss2skew = TRUE, uniquec = TRUE, training_optimal = TRUE, predictionsT =  list(B), classesT = list(classes), uniqueTraining = TRUE, kendall_curves = TRUE, rate_driven = TRUE)
-
-```
-
 ***
 ##Description of features
 ###Functions to plot Cost Curves
+* CostLines
+* TestOptimal
+* TrainOptimal
 * BrierCurves
-* CCtresholdChoice
-* CostCurves
 * KendallCurves
 * RateDrivenCurves
+* CostCurves
 * RocCurves
-* TestOptimal
-* TrainingOptimal
 
 ###Graphics Options settings
 Parameter          | Description
@@ -180,32 +183,32 @@ loss2Skew          | If it is TRUE, loss by Skew is plotted otherwise loss by co
 uniquec            | If it is TRUE, the same array classes is used for each array in a list predictions.
 
 ###Specific Options settings
-* Using only in CCtresholdChoice function:
+* Using only in CostCurves function:
 
 Parameter          | Description
 -------------------|------------------------
-cost-curves        | To plot cost curves.
+cost-lines         | To plot cost curves.
 test_optimal       | To plot cost curves using test optimal treshold choice method.
-training_optimal   | To plot cost curves using training optimal treshold choice method. 
-predictionsT       | A list of classes arrays, each array represent predictions or scores of training classifier. -Only for training optimal option-
-classesT           | A list of classes arrays, each array represent binary classes training. -Only for training optimal option-
-uniquecT           | If it is TRUE, the same array classes is used for each array in a list predictions training. -Only for training optimal option-
-uniqueTraining     | If it is TRUE, the same array of predictionsT and classesT is used for each array in a list predictions. -Only for training optimal- option_
+train_optimal   | To plot cost curves using train optimal treshold choice method. 
+predictionsT       | A list of classes arrays, each array represent predictions or scores of train classifier. -Only for train optimal option-
+classesT           | A list of classes arrays, each array represent binary classes train. -Only for train optimal option-
+uniquecT           | If it is TRUE, the same array classes is used for each array in a list predictions train. -Only for train optimal option-
+uniqueTrain     | If it is TRUE, the same array of predictionsT and classesT is used for each array in a list predictions. -Only for train optimal- option_
 score_driven       | To plot cost curves  using score driven treshold choice method.
 rate_driven        | To plot cost curves using rate driven treshold choice method.
 kendall_curves     | To plot cost curves using kendall driven treshold choice method.
 
-* Using only in TrainingOptimal function:
+* Using only in TrainOptimal function:
 
 Parameter               | Description
 ------------------------|------------------------
-predictions_training    | A list of predictions arrays, each array represent scores of a specific classifier training.
-classes_training        | A list of classes arrays, each array represent binary classes of training.
+predictions_train   | A list of predictions arrays, each array represent scores of a specific classifier using train.
+classes_train        | A list of classes arrays, each array represent binary classes of train.
 predictions_test        | A list of predictions arrays, each array represent scores test.
 classes_test            | A list of classes arrays, each array represent binary classes test.
-uniquecT                | If it is TRUE, the same array classes is used for each array in a list predictions Training.
+uniquecT                | If it is TRUE, the same array classes is used for each array in a list predictions train.
 uniquect                | If it is TRUE, the same array classes is used for each array in a list predictions test.
-refuseT	                | It is possible to use the same training classifier for every test.
+refuseT	                | It is possible to use the same train classifier for every test.
 
 ***
 
