@@ -23,13 +23,13 @@ For linux download: "CostCurves_0.1.0.tar"
 
 
 ```{r}
-#install.packages("../CostCurves_0.1.0.tar")
+#install.packages("./CostCurves_0.1.0.tar", repos = NULL)
 ```
 
 
 For windows download: "CostCurves_0.1.0"
 ```{r}
-#install.packages("../CostCurves_0.1.0")
+#install.packages("./CostCurves_0.1.0")
 ```
 
 ***
